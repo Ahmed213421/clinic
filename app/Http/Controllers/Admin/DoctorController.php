@@ -4,13 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DoctorRequest;
+use App\Http\Requests\UpdateDoctorRequest;
+use App\Models\Admin;
 use App\Models\Doctor;
 use App\Repositories\DoctorRepository;
+use DB;
 use Illuminate\Http\Request;
+
+use function PHPUnit\Framework\throwException;
 
 class DoctorController extends Controller
 {
-
     protected $doctorRepository;
 
     public function __construct(DoctorRepository $doctorRepository)
@@ -22,8 +26,9 @@ class DoctorController extends Controller
      */
     public function index()
     {
-        $doctors = Doctor::all();
-        return view('dashboard.doctor.index',compact('doctors'));
+        $doctors = Admin::role('doctor')->get();
+
+        return view('dashboard.doctor.index', compact('doctors'));
     }
 
     /**
@@ -39,13 +44,19 @@ class DoctorController extends Controller
      */
     public function store(DoctorRequest $request)
     {
+
         try {
-        $data = $request->validated();
-        $this->doctorRepository->store($data);
-        return back();
+            DB::beginTransaction();
+            $this->doctorRepository->store($request->validated());
+            DB::commit();
         } catch (\Exception $e) {
-            toastr()->error('Failed to create doctor. Please try again later.');
+            DB::rollBack();
+            throw $e;
+            // toastr()->error($e->getMessage());
+            // toastr()->error('Failed to create doctor. Please try again later.');
         }
+
+        return back();
 
     }
 
@@ -68,16 +79,36 @@ class DoctorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateDoctorRequest $request, $id)
     {
-        //
+
+        try {
+            DB::beginTransaction();
+            $this->doctorRepository->update($id, $request->validated());
+            toastr()->success('doctor updated successfully');
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            toastr()->error($e->getMessage());
+            // toastr()->error('Failed to create doctor. Please try again later.');
+        }
+        return back();
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $this->doctorRepository->destroy($id);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            // toastr()->error('Failed to create doctor. Please try again later.');
+        }
+        return back();
     }
 }

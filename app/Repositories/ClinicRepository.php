@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories;
 
 use App\Models\Clinic;
@@ -17,8 +18,7 @@ class ClinicRepository implements ClinicRepositoryInterface
     {
         $clinic = $this->model->create($data);
 
-        $clinic->doctors()->attach($data['doctor_id'] ?? []);
-        $clinic->appointments()->attach($data['appointment_id'] ?? []);
+        $clinic->doctors()->attach($data['doctors'] ?? []);
 
         return $clinic;
 
@@ -28,7 +28,6 @@ class ClinicRepository implements ClinicRepositoryInterface
     {
         $model->update($data);
         $model->doctors()->sync($data['doctor_id']);
-        $model->appointments()->sync($data['appointments_id']);
 
         return $model;
     }

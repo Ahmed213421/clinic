@@ -12,24 +12,26 @@ class AppointmentRequest extends FormRequest
     }
 
     public function rules(): array
-    {
-        return [
-            'clinic_id'   => 'required|array|min:1',
-            'clinic_id.*' => 'exists:clinics,id',
-            'start_time'  => 'required|date|before:end_time',
-            'end_time'    => 'required|date|after:start_time',
-        ];
-    }
+{
+    return [
+        'doctor_id'   => 'required|exists:admins,id|min:1',
+        'clinic_id'   => 'required|exists:clinics,id|min:1',
+        'start_time'  => 'required|date|after_or_equal:now|before:end_time',
+        'end_time'    => 'required|date|after:start_time',
+    ];
+}
+
 
     public function messages(): array
-    {
-        return [
-            'clinic_id.required'   => 'Please select at least one clinic.',
-            'clinic_id.*.exists'   => 'The selected clinic is invalid.',
-            'start_time.required'  => 'Start time is required.',
-            'start_time.before'    => 'Start time must be before end time.',
-            'end_time.required'    => 'End time is required.',
-            'end_time.after'       => 'End time must be after start time.',
-        ];
-    }
+{
+    return [
+        'doctor_id.required'   => 'Please select at least one doctor.',
+        'start_time.required'  => 'Start time is required.',
+        'start_time.before'    => 'Start time must be before end time.',
+        'start_time.after_or_equal' => 'Start time must not be in the past.',
+        'end_time.required'    => 'End time is required.',
+        'end_time.after'       => 'End time must be after start time.',
+    ];
+}
+
 }

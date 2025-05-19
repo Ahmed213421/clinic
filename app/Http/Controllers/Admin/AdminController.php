@@ -15,9 +15,9 @@ class AdminController extends Controller
     public function __construct()
     {
         // $this->middleware('permission:view-user,admin', ['only' => ['index']]);
-    //     $this->middleware('permission:create-user', ['only' => ['create','store']]);
-    //     $this->middleware('permission:update-user', ['only' => ['update','edit']]);
-    //     $this->middleware('permission:delete-user', ['only' => ['destroy']]);
+        //     $this->middleware('permission:create-user', ['only' => ['create','store']]);
+        //     $this->middleware('permission:update-user', ['only' => ['update','edit']]);
+        //     $this->middleware('permission:delete-user', ['only' => ['destroy']]);
     }
 
     public function index()
@@ -40,7 +40,7 @@ class AdminController extends Controller
 
     public function create()
     {
-        $roles = Role::pluck('name','name')->all();
+        $roles = Role::pluck('name', 'name')->all();
         return view('dashboard.role-permission.user.create', ['roles' => $roles]);
     }
 
@@ -63,13 +63,13 @@ class AdminController extends Controller
 
         $user->syncRoles($request->roles);
 
-        return redirect()->route('admin.users.index')->with('status','User created successfully with roles');
+        return redirect()->route('admin.users.index')->with('status', 'User created successfully with roles');
     }
 
     public function edit(Admin $user)
     {
-        $roles = Role::pluck('name','name')->all();
-        $userRoles = $user->roles->pluck('name','name')->all();
+        $roles = Role::pluck('name', 'name')->all();
+        $userRoles = $user->roles->pluck('name', 'name')->all();
         return view('dashboard.role-permission.user.edit', [
             'user' => $user,
             'roles' => $roles,
@@ -92,23 +92,22 @@ class AdminController extends Controller
             'status' => $request->status,
         ];
 
-        if(!empty($request->password)){
+        if (!empty($request->password)) {
             $data  [
                 'password'
-            ]=Hash::make($request->password);
+            ] = Hash::make($request->password);
         }
 
         $user->update(Arr::except($data, ['roles']));
         $user->syncRoles($request->roles);
 
-        return redirect()->route('admin.users.index')->with('status','User Updated Successfully with roles');
+        return redirect()->route('admin.users.index')->with('status', 'User Updated Successfully with roles');
     }
 
-    public function destroy($userId)
+    public function destroy(Admin $user)
     {
-        $user = Admin::findOrFail($userId);
         $user->delete();
 
-        return redirect()->route('admin.users.index')->with('status','User Delete Successfully');
+        return redirect()->route('admin.users.index')->with('status', 'User Deleted Successfully');
     }
 }

@@ -14,8 +14,8 @@ class DoctorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name'        => 'required|string|max:100',
-            'last_name'         => 'required|string|max:100',
+            'name'        => 'required|string|max:100',
+            'password'        => 'required|string|max:100',
             'phone_number'      => 'required|string|max:15',
             'email'             => 'required|email|max:100|unique:doctors,email,' . $this->doctor,
             'specialization_id' => 'required|exists:specializations,id',

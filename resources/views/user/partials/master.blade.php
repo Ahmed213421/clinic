@@ -42,29 +42,50 @@
                         {{-- @php
                             dd(Auth::guard('admin')->user()->notifications);
                         @endphp --}}
-                        {{-- @foreach (Auth::guard('admin')->user()->notifications as $item)
-                            @php
-                                $notificationId = $item->id;
-                            @endphp
 
-                            @if ($item->type == 'App\Notifications\NewCustomerReviewNotification')
-                                <a href="{{ route('admin.review.index') }}" class="list-group-item notification-link bg-transparent" data-id="{{$notificationId}}">
-                                    <div
-                                        class="list-group-item {{ $item->read_at == null ? 'bg-light' : 'bg-transparent' }}">
-                                        <div class="row align-items-center">
-                                            <div class="col-auto">
-                                                <span class="fe fe-box fe-24"></span>
-                                            </div>
-                                            <div class="col">
-                                                <small><strong>{{ trans('notifiication.review') }}</strong></small>
-                                                <small
-                                                    class="badge badge-pill badge-light text-muted">{{ $item->created_at->diffForHumans() }}</small>
-                                            </div>
+                        @foreach (Auth::guard('web')->user()->notifications as $item)
+                            {{-- @php
+                                $notificationId = $item->id;
+                            @endphp --}}
+
+                            @if ($item->type == 'App\Notifications\DoctorAppointmentStatusNotification')
+                                {{-- <a href="{{ route('admin.review.index') }}" class="list-group-item notification-link bg-transparent" data-id="{{$notificationId}}"> --}}
+                                <div
+                                    class="list-group-item {{ $item->read_at == null ? 'bg-light' : 'bg-transparent' }}">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="fe fe-box fe-24"></span>
+                                        </div>
+                                        <div class="col">
+                                            <small>the doctor {{ $item->data['doctor'] }} has
+                                                {{ $item->data['status'] }} the appointment</small>
+                                            <small
+                                                class="badge badge-pill badge-light text-muted">{{ $item->created_at->diffForHumans() }}</small>
                                         </div>
                                     </div>
-                                </a>
+                                </div>
+                                {{-- </a> --}}
                             @endif
-                            @if ($item->type == 'App\Notifications\NewOrderNotification')
+                            @if ($item->type == 'App\Notifications\UserAppointmentStatusNotification')
+                                {{-- <a href="{{ route('admin.review.index') }}" class="list-group-item notification-link bg-transparent" data-id="{{$notificationId}}"> --}}
+                                <div
+                                    class="list-group-item {{ $item->read_at == null ? 'bg-light' : 'bg-transparent' }}">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <span class="fe fe-box fe-24"></span>
+                                        </div>
+                                        <div class="col">
+                                            <small><strong>the patient {{ $item->data['patient'] }} has
+                                                    {{ $item->data['status'] }}
+                                                    {{ $item->data['appointment_time'] }}</strong></small>
+                                            <small
+                                                class="badge badge-pill badge-light text-muted">{{ $item->created_at->diffForHumans() }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- </a> --}}
+                            @endif
+                            {{-- @if ($item->type == 'App\Notifications\NewOrderNotification')
                                 <a href="{{ route('admin.orders.index') }}" class="list-group-item notification-link bg-transparent" data-id="{{$notificationId}}">
                                     <div
                                         class="list-group-item {{ $item->read_at == null ? 'bg-light' : 'bg-transparent' }}" >
@@ -81,8 +102,8 @@
                                         </div>
                                     </div>
                                 </a>
-                            @endif
-                        @endforeach --}}
+                            @endif --}}
+                        @endforeach
                         {{-- <div class="list-group-item bg-transparent">
                             <div class="row align-items-center">
                                 <div class="col-auto">

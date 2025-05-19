@@ -56,7 +56,7 @@ class ProfileSettingController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validator = Validator::make($request->all(),[
+        $validator = Validator::make($request->all(), [
             'name' => 'string|max:255',
             'email' => 'email|max:255|unique:admins,email,' . auth()->id(),
             'password' => 'string|min:8|confirmed|nullable',
@@ -77,23 +77,22 @@ class ProfileSettingController extends Controller
 
 
         if ($request->hasFile('photo')) {
-            if($user->image){
+            if ($user->image) {
                 if (file_exists(public_path($user->image->imagepath))) {
                     unlink(public_path($user->image->imagepath));
                 }
-                $path = 'dashboard/'.$request->photo->storeAs('admin_profile', time().'_'.$request->photo->getClientOriginalName(),'images');
+                $path = 'dashboard/'.$request->photo->storeAs('admin_profile', time().'_'.$request->photo->getClientOriginalName(), 'images');
 
                 $user->image->update(['imagepath' => $path]);
 
-            }
-            else{
-                $path = 'dashboard/'.$request->photo->storeAs('admin_profile', time().'_'.$request->photo->getClientOriginalName(),'images');
+            } else {
+                $path = 'dashboard/'.$request->photo->storeAs('admin_profile', time().'_'.$request->photo->getClientOriginalName(), 'images');
 
                 $user->image()->create(['imagepath' => $path]);
             }
         }
 
-        if(!Hash::check($request->oldpassword, $user->password)){
+        if (!Hash::check($request->oldpassword, $user->password)) {
             return back()->withErrors(['oldpassword' => 'The old password is incorrect.']);
         }
 

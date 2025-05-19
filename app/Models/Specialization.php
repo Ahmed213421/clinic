@@ -10,10 +10,12 @@ class Specialization extends Model
     protected $fillable = ['name'];
     use HasFactory;
 
-    
+
 
 
     public function doctors(){
-        return $this->hasMany(Doctor::class);
+        return $this->hasMany(Admin::class)->whereHas('roles', function($q) {
+            $q->where('name', 'doctor');
+        });
     }
 }

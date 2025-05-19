@@ -17,7 +17,7 @@ class UserAppointment extends Model
         return $this->belongsTo(User::class,'user_id');
     }
     public function doctor(){
-        return $this->belongsTo(Doctor::class,'doctor_id');
+        return $this->belongsTo(Admin::class,'doctor_id');
     }
     public function clinic(){
         return $this->belongsTo(Clinic::class,'clinic_id');
@@ -25,5 +25,10 @@ class UserAppointment extends Model
 
     public function appointment(){
         return $this->belongsTo(Appointment::class,'appointment_id');
+    }
+
+    public function cancelledBy()
+    {
+        return $this->morphTo();
     }
 }

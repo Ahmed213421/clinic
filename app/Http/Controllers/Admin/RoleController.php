@@ -17,7 +17,7 @@ class RoleController extends Controller
 {
     protected $adminroleRepository;
     protected $roleServiceInterface;
-    public function __construct(AdminRoleRepositoryInterface $adminroleRepository,RoleServiceInterface $roleServiceInterface)
+    public function __construct(AdminRoleRepositoryInterface $adminroleRepository, RoleServiceInterface $roleServiceInterface)
     {
         $this->adminroleRepository = $adminroleRepository;
         $this->roleServiceInterface = $roleServiceInterface;
@@ -41,42 +41,50 @@ class RoleController extends Controller
     public function store(RoleRequest $request)
     {
 
-        try{
-        $this->adminroleRepository->store($request->validated());
-        }catch(\Exception $e){
+        try {
+            DB::beginTransaction();
+            $this->adminroleRepository->store($request->validated());
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
             toastr()->error('Failed to store role. Please try again later.');
         }
-        return redirect()->route('admin.roles.index')->with('status','Role Created Successfully');
+        return redirect()->route('admin.roles.index')->with('status', 'Role Created Successfully');
     }
 
     public function edit(Role $role)
     {
-        return view('dashboard.role-permission.role.edit',[
+        return view('dashboard.role-permission.role.edit', [
             'role' => $role
         ]);
     }
 
     public function update(UpdateRoleRequest $request, Role $role)
     {
-        try{
-        $this->adminroleRepository->update($role,$request->validated());
-        toastr()->success('Role updated successfully');
-        }catch(\Exception $e){
+        try {
+            DB::beginTransaction();
+            $this->adminroleRepository->update($role, $request->validated());
+            toastr()->success('Role updated successfully');
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
             toastr()->error('Failed to update role. Please try again later.');
         }
-        return redirect()->route('admin.roles.index')->with('status','Role Updated Successfully');
+        return redirect()->route('admin.roles.index')->with('status', 'Role Updated Successfully');
     }
 
     public function destroy(Role $role)
     {
-        try{
-        $this->adminroleRepository->destroy($role);
-        toastr()->success('Role deleted successfully');
-        }catch(\Exception $e){
+        try {
+            DB::beginTransaction();
+            $this->adminroleRepository->destroy($role);
+            toastr()->success('Role deleted successfully');
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
             toastr()->error('Failed to delete role. Please try again later.');
         }
-        toastr()->success('Role deleted successfully');
-        return redirect()->route('admin.roles.index')->with('status','Role Deleted Successfully');
+        return redirect()->route('admin.roles.index')->with('status', 'Role Deleted Successfully');
     }
 
     public function addPermissionToRole($roleId)
@@ -85,7 +93,7 @@ class RoleController extends Controller
         $role = Role::findOrFail($roleId);
         $rolePermissions = DB::table('role_has_permissions')
                                 ->where('role_has_permissions.role_id', $role->id)
-                                ->pluck('role_has_permissions.permission_id','role_has_permissions.permission_id')
+                                ->pluck('role_has_permissions.permission_id', 'role_has_permissions.permission_id')
                                 ->all();
 
         return view('dashboard.role-permission.role.add-permissions', [
@@ -95,17 +103,19 @@ class RoleController extends Controller
         ]);
     }
 
-    public function givePermissionToRole(GivePermissionToRoleRequest $request, $roleId)
+    public function givePermissionToRole(GivePermissionToRoleRequest $request, Role $role)
     {
 
 
-        try{
-            
-            $this->roleServiceInterface->givePermissionToRole($roleId,$request->validated());
+        try {
+            DB::beginTransaction();
+            $this->roleServiceInterface->givePermissionToRole($role, $request->validated());
             toastr()->success('Permissions Added To Role successfully');
-        }catch(\Exception $e){
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
             toastr()->error('Failed to delete role. Please try again later.');
         }
-        return redirect()->back()->with('status','Permissions added to role');
+        return redirect()->back()->with('status', 'Permissions added to role');
     }
 }

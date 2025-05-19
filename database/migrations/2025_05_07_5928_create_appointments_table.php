@@ -15,7 +15,11 @@ return new class extends Migration
             $table->id();
             $table->timestamp('start_time')->nullable();;
             $table->timestamp('end_time')->nullable();;
-
+            $table->foreignId('doctor_id')->nullable()->constrained('admins')->onDelete('cascade');
+            // $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            // $table->enum('status',['accepted','cancelled','pending'])->default('pending');
+            $table->foreignId('clinic_id')->nullable()->constrained('clinics')->onDelete('cascade');
+            $table->boolean('booked')->default(0);
             $table->timestamps();
         });
     }

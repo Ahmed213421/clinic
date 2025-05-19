@@ -15,6 +15,8 @@ class UserRolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
+
+
         // Create Permissions with 'admin' guard
         $permissions = [
             'view-role', 'create-role', 'update-role', 'delete-role',
@@ -32,9 +34,7 @@ class UserRolePermissionSeeder extends Seeder
         }
 
         // Create Roles with 'admin' guard
-        $superAdminRole = Role::firstOrCreate(['name' => 'super-admin', 'guard_name' => 'admin'
-
-        ]);
+        $superAdminRole = Role::firstOrCreate(['name' => 'super-admin', 'guard_name' => 'admin']);
         $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'admin']);
         $doctorRole = Role::firstOrCreate(['name' => 'doctor', 'guard_name' => 'admin']);
 
@@ -48,29 +48,48 @@ class UserRolePermissionSeeder extends Seeder
         ];
         $doctorRole->syncPermissions($doctorPermissions);
 
+
+        $adminUser = Admin::firstOrCreate([
+            'email' => 'admin@gmail.com',
+        ], [
+            'name' => 'Admin',
+            'password' => Hash::make('123'),
+            'status' => 'active',
+        ]);
+        
         // Assign Roles to Users
-        $superAdminUser = Admin::find(1);
+        $superAdminUser = Admin::where('email','admin@gmail.com')->first();
         if ($superAdminUser) {
             $superAdminUser->assignRole($superAdminRole);
         } else {
             $this->command->warn('Super Admin user (ID: 1) not found.');
         }
 
-        $adminUser = Admin::firstOrCreate([
-            'email' => 'admin@gmail.com',
-        ], [
-            'name' => 'Admin',
-            'password' => Hash::make('12345678'),
-            'status' => 'unactive',
-        ]);
+
 
         $doctorUser = Admin::firstOrCreate([
-            'email' => 'doctor@doctor.com',
+            'email' => 'spiderofegypt98@gmail.com',
         ], [
             'name' => 'doctor',
-            'password' => Hash::make('12345678'),
+            'specialization_id' => '1',
+            'password' => Hash::make('123'),
             'status' => 'active',
         ]);
+
+        // Admin::create([
+        //     'name' => 'Ahmed Samir',
+        //     'email' => 'admin@admin.com',
+        //     'type' => 'super_admin',
+        //     'password' => Hash::make('123'),
+        //     'status' => 'active',
+        // ]);
+        // Admin::create([
+        //     'name' => 'Ahmed Samir',
+        //     'email' => 'spiderofegypt98@gmail.com',
+        //     'type' => 'super_admin',
+        //     'password' => Hash::make('123'),
+        //     'status' => 'active',
+        // ]);
 
         $adminUser->assignRole($adminRole);
         $doctorUser->assignRole($doctorRole);

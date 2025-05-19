@@ -15,8 +15,11 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create(): mixed
     {
+        if (Auth::check()) {
+        return redirect()->route('user.home');
+    }
         return view('auth.login');
     }
 

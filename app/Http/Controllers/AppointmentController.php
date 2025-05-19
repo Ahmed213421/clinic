@@ -3,16 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Clinic\AppointmentRequest;
+use App\Http\Requests\Clinic\UpdatedAppointmentRequest;
 use App\Models\Appointment;
 use App\Models\UserAppointment;
 use App\Repositories\Interfaces\userInterface\UserAppointmentRepositoryInterface;
+use DB;
+use Exception;
 use Illuminate\Http\Request;
 
 class AppointmentController extends Controller
 {
     protected $userAppointmemntRepository;
 
-    public function __construct(UserAppointmentRepositoryInterface $userAppointmemntRepository) {
+    public function __construct(UserAppointmentRepositoryInterface $userAppointmemntRepository)
+    {
         $this->userAppointmemntRepository = $userAppointmemntRepository;
     }
     /**
@@ -20,8 +24,9 @@ class AppointmentController extends Controller
      */
     public function index()
     {
-        $Appointments = UserAppointment::where('user_id',auth()->user()->id)->latest()->get();
-        return view('user.appointment.index',compact('Appointments'));
+        $Appointments = UserAppointment::where('user_id', auth()->user()->id)->latest()->get();
+
+        return view('user.appointment.index', compact('Appointments'));
     }
 
     /**
@@ -37,9 +42,20 @@ class AppointmentController extends Controller
      */
     public function store(AppointmentRequest $request)
     {
-        $this->userAppointmemntRepository->store($request->validated());
+        try {
 
-        return redirect()->route('user.appointment.index');
+            DB::beginTransaction();
+
+            $this->userAppointmemntRepository->store($request->validated());
+
+            toastr()->success('user Appointment created successfully');
+
+            DB::commit();
+            return redirect()->route('user.appointment.index');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -61,16 +77,41 @@ class AppointmentController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdatedAppointmentRequest $request, UserAppointment $appointment)
     {
-        //
+        try {
+
+            DB::beginTransaction();
+
+
+            $this->userAppointmemntRepository->update($appointment, $request->validated());
+            toastr()->success('user Appointment updated successfully');
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            toastr()->error('Failed to updade appointment. Please try again later.');
+            // toastr()->error($e->getMessage());
+            // throw $e;
+        }
+        return back();
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(UserAppointment $appointment)
     {
-        //
+
+        try {
+            DB::beginTransaction();
+            $this->userAppointmemntRepository->destroy($appointment);
+            toastr()->success('Appointment deleted successfully');
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            toastr()->error('Failed to delete clinic. Please try again later.');
+        }
+        return back();
     }
 }

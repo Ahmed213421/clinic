@@ -15,9 +15,10 @@ class AppointmentRequest extends FormRequest
         return [
             'user_id' => ['required', 'exists:users,id'],
             'clinic_id' => ['required', 'exists:clinics,id'],
-            'doctor_id' => ['required', 'exists:doctors,id'],
+            'doctor_id' => ['required', 'exists:admins,id'],
             'appointment_id' => ['required', 'exists:appointments,id'],
             'phone' => ['required', 'string', 'regex:/^\+?[0-9\s\-\(\)]+$/'],
+            
         ];
     }
 

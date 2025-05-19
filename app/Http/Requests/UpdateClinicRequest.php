@@ -26,7 +26,7 @@ class UpdateClinicRequest extends FormRequest
             'address' => 'required|string|max:500',
             'phone'   => 'nullable|string|max:20',
             'doctor_id' => 'nullable|array|min:1',
-            'doctor_id.*' => 'exists:doctors,id',
+            'doctor_id.*' => 'exists:admins,id',
             'appointment_id' => 'nullable|array|min:1',
             'appointment_id.*' => 'exists:appointments,id',
         ];

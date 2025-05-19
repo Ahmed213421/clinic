@@ -15,14 +15,13 @@ class Clinic extends Model
         'phone',
     ];
 
-    public function doctors() {
-        return $this->belongsToMany(Doctor::class,'clinic_doctor');
+    public function doctors()
+    {
+        return $this->belongsToMany(Admin::class, 'clinic_doctor', 'clinic_id', 'doctor_id');
     }
+
     public function appointments() {
         return $this->belongsToMany(Appointment::class, 'appointment_clinic');
     }
 
-    public function USerAppointment(){
-        return $this->belongsToMany(UserAppointment::class,'clinic_user');
-    }
 }

@@ -29,6 +29,7 @@ class Admin extends Authenticatable
         'email',
         'status',
         'password',
+        'specialization_id',
     ];
 
     /**
@@ -50,4 +51,19 @@ class Admin extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function clinics()
+    {
+        return $this->belongsToMany(Clinic::class, 'clinic_doctor', 'doctor_id', 'clinic_id')->withTimestamps();
+    }
+
+
+    public function specialization(){
+        return $this->belongsTo(Specialization::class,'specialization_id');
+    }
+
+    public function appointments(){
+        return $this->hasMany(Appointment::class,'doctor_id');
+    }
+
 }

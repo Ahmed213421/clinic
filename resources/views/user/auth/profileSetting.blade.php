@@ -109,28 +109,29 @@
                             placeholder="brown@asher.me">
                     </div>
 
-            <hr class="my-4">
-            <div class="row mb-4">
-                <div class="col-md-6 col-lg-12">
-                    <div class="form-group">
-                        <label for="inputPassword4">{{ trans('general.password') }}</label>
-                        <input type="password" class="form-control" id="inputPassword5" name="oldpassword">
+                    <hr class="my-4">
+                    <div class="row mb-4">
+                        <div class="col-md-6 col-lg-12">
+                            <div class="form-group">
+                                <label for="inputPassword4">{{ trans('general.password') }}</label>
+                                <input type="password" class="form-control" id="inputPassword5" name="oldpassword">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputPassword5">{{ trans('general.new') }}
+                                    {{ trans('general.password') }}</label>
+                                <input type="password" class="form-control" id="inputPassword5" name="password">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputPassword6">{{ trans('general.confirm_password') }}</label>
+                                <input type="password" class="form-control" id="inputPassword6"
+                                    name="password_confirmation">
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="inputPassword5">{{ trans('general.new') }}
-                            {{ trans('general.password') }}</label>
-                        <input type="password" class="form-control" id="inputPassword5" name="password">
-                    </div>
-                    <div class="form-group">
-                        <label for="inputPassword6">{{ trans('general.confirm_password') }}</label>
-                        <input type="password" class="form-control" id="inputPassword6" name="password_confirmation">
-                    </div>
-                </div>
+                    <button type="submit" class="btn btn-primary">{{ trans('general.submit') }}</button>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary">{{ trans('general.submit') }}</button>
-            </form>
         </div>
-    </div>
 
 
     </div>

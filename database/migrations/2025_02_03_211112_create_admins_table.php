@@ -20,24 +20,14 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('status',['active','unactive']);
+            $table->foreignId('specialization_id')->nullable()->constrained();
             $table->rememberToken();
             $table->timestamps();
         });
 
-        Admin::create([
-            'name' => 'Ahmed Samir',
-            'email' => 'admin@admin.com',
-            'type' => 'super_admin',
-            'password' => Hash::make('123'),
-            'status' => 'active',
-        ]);
-        Admin::create([
-            'name' => 'Ahmed Samir',
-            'email' => 'spiderofegypt98@gmail.com',
-            'type' => 'super_admin',
-            'password' => Hash::make('123'),
-            'status' => 'active',
-        ]);
+
+
+
     }
 
     /**

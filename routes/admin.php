@@ -17,31 +17,31 @@ use App\Http\Controllers\Admin;
 
 
 
-Route::prefix('/dashboard')->middleware('admin')->name('admin.')->group(function(){
-    Route::get('dashboard',function(){
+Route::prefix('/dashboard')->middleware('admin')->name('admin.')->group(function () {
+    Route::get('dashboard', function () {
         return view('dashboard.index');
     })->name('dashboard');
     Route::resource('profile/settings', Admin\ProfileSettingController::class)->names('profile');
 });
 
-Route::prefix('/dashboard')->middleware('admin')->name('admin.')->group(function(){
+Route::prefix('/dashboard')->middleware('admin')->name('admin.')->group(function () {
     Route::resource('permissions', Admin\PermissionController::class);
 
-    Route::get('roles/{roleId}/delete', [Admin\RoleController::class, 'destroy']);
-    Route::get('roles/{roleId}/give-permissions', [Admin\RoleController::class, 'addPermissionToRole']);
-    Route::put('roles/{roleId}/give-permissions', [Admin\RoleController::class, 'givePermissionToRole']);
+    Route::get('roles/{role}/delete', [Admin\RoleController::class, 'destroy']);
+    Route::get('roles/{role}/give-permissions', [Admin\RoleController::class, 'addPermissionToRole']);
+    Route::put('roles/{role}/give-permissions', [Admin\RoleController::class, 'givePermissionToRole']);
     Route::resource('roles', Admin\RoleController::class);
 
-    Route::get('users/{userId}/delete', [Admin\AdminController::class, 'destroy']);
+    Route::delete('users/{user}/delete', [Admin\AdminController::class, 'destroy'])->name('usersdelete');
     Route::resource('users', Admin\AdminController::class);
 
-    Route::resource('clinic',Admin\ClinicController::class);
-    Route::resource('appointment',Admin\AppointmentController::class);
-    Route::resource('doctor',Admin\DoctorController::class);
-
+    Route::resource('clinic', Admin\ClinicController::class);
+    Route::resource('appointment', Admin\AppointmentController::class);
+    Route::resource('doctor', Admin\DoctorController::class);
+    Route::view('booked', 'dashboard.booking')->name('booked');
 });
 
-Route::prefix('/dashboard')->middleware('admin')->name('admin.')->group(function(){
+Route::prefix('/dashboard')->middleware('admin')->name('admin.')->group(function () {
     Route::get('forgot-password', [Admin\Auth\AdminPasswordResetLinkController::class, 'create'])
         ->name('password.request')->withoutMiddleware('admin');
 

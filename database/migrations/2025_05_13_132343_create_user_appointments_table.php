@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('user_appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('doctor_id')->constrained()->onDelete('cascade');
+            $table->foreignId('doctor_id')->constrained('admins')->onDelete('cascade');
             $table->foreignId('clinic_id')->constrained()->onDelete('cascade');
             $table->foreignId('appointment_id')->constrained()->onDelete('cascade');
+            $table->enum('status',['cancelled','pending','accepted'])->default('pending');
+            $table->nullableMorphs('cancelled_by');
             $table->string('phone');
             $table->timestamps();
         });
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('userappointments');
+        Schema::dropIfExists('user_appointments');
     }
 };

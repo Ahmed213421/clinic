@@ -7,11 +7,11 @@ use App\Http\Requests\ClinicRequest;
 use App\Http\Requests\UpdateClinicRequest;
 use App\Models\Clinic;
 use App\Repositories\Interfaces\ClinicRepositoryInterface;
+use DB;
 use Illuminate\Http\Request;
 
 class ClinicController extends Controller
 {
-
     protected $clinicRepository;
 
     public function __construct(ClinicRepositoryInterface $clinicRepository)
@@ -25,7 +25,7 @@ class ClinicController extends Controller
     public function index()
     {
         $clinics = Clinic::latest()->get();
-        return view('dashboard.clinic.index',compact('clinics'));
+        return view('dashboard.clinic.index', compact('clinics'));
     }
 
     /**
@@ -42,10 +42,13 @@ class ClinicController extends Controller
     public function store(ClinicRequest $request)
     {
         try {
-        $data = $request->validated();
-        $this->clinicRepository->store($data);
-        toastr()->success('Clinic created successfully');
-        }catch (\Exception $e) {
+            DB::beginTransaction();
+            $this->clinicRepository->store($request->validated());
+            toastr()->success('Clinic created successfully');
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // toastr()->error($e);
             toastr()->error('Failed to create clinic. Please try again later.');
         }
 
@@ -73,14 +76,19 @@ class ClinicController extends Controller
      */
     public function update(UpdateClinicRequest $request, Clinic $clinic)
     {
+
         try {
-        $data = $request->validated();
-        $this->clinicRepository->update($clinic, $data);
-        toastr()->success('Clinic updated successfully');
-        return back();
+            DB::beginTransaction();
+            $data = $request->validated();
+            $this->clinicRepository->update($clinic, $data);
+            toastr()->success('Clinic updated successfully');
+            DB::commit();
         } catch (\Exception $e) {
-            toastr()->error('Failed to update clinic. Please try again later.');
+            DB::rollBack();
+            toastr()->error($e->getMessage());
+            // toastr()->error('Failed to update clinic. Please try again later.');
         }
+        return back();
     }
 
     /**
@@ -88,14 +96,15 @@ class ClinicController extends Controller
      */
     public function destroy(Clinic $clinic)
     {
-    try {
-    $this->clinicRepository->destroy($clinic);
-    toastr()->success('Clinic deleted successfully');
+        try {
+            DB::beginTransaction();
+            $this->clinicRepository->destroy($clinic);
+            toastr()->success('Clinic deleted successfully');
 
 
-    return back();
-    } catch (\Exception $e) {
+        } catch (\Exception $e) {
             toastr()->error('Failed to delete clinic. Please try again later.');
         }
+        return back();
     }
 }
